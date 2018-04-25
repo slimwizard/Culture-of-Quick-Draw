@@ -1,11 +1,10 @@
 import numpy as np
 import jsonlines as jl
 from pprint import pprint
+import itertools
 
 file_list = ['car', 'shoe', 'backpack', 'sun', 'power_outlet']
 for _file in file_list:
-    npy_data = np.load(f'./data/{_file}.npy')
-
 
     NorthAmerica = ["AI", "AG", "AW", "BS", "BB", "BZ", "BM", "BQ", "VG", "CA", "KY", "CR", "CU", "CW", "DM", "DO", "SV", "GL", "GD", "GP", "GT", "HT", "HN", "JM", "MQ", "MX", "PM", "MS", "CW", "KN", "NI", "PA", "PR", "BQ", "SX", "LC", "PM", "VC", "TT", "TC", "US", "VI"]
     SouthAmerica = ["AR", "BO", "BR", "CL", "CO", "EC", "FK", "GF", "GY", "GY", "PY", "PE", "SR", "UY", "VE"]
@@ -28,7 +27,7 @@ for _file in file_list:
         for obj in reader:
             d={}
             d['countrycode'] = obj['countrycode']
-            d['bitmap'] = npy_data[index]
+            d['drawing'] = obj['drawing']
             index += 1
             overall_list.append(d)
 
@@ -45,8 +44,36 @@ for _file in file_list:
             AS_list.append(i)
         elif i['countrycode'] in Oceana_Australia:
             OA_list.append(i)
-
-
+    file = open(f'./data/NA_{_file}.jsonl', 'w')
+    for json in NA_list:
+        json['countrycode'] = 'NA'
+        file.write(f'{json}\n')
+    file.close()
+    file = open(f'./data/SA_{_file}.jsonl', 'w')
+    for json in SA_list:
+        json['countrycode'] = 'SA'
+        file.write(f'{json}\n')
+    file.close()
+    file = open(f'./data/AF_{_file}.jsonl', 'w')
+    for json in AF_list:
+        json['countrycode'] = 'AF'
+        file.write(f'{json}\n')
+    file.close()
+    file = open(f'./data/EU_{_file}.jsonl', 'w')
+    for json in EU_list:
+        json['countrycode'] = 'EU'
+        file.write(f'{json}\n')
+    file.close()
+    file = open(f'./data/AS_{_file}.jsonl', 'w')
+    for json in AS_list:
+        json['countrycode'] = 'AS'
+        file.write(f'{json}\n')
+    file.close()
+    file = open(f'./data/OA_{_file}.jsonl', 'w')
+    for json in OA_list:
+        json['countrycode'] = 'OA'
+        file.write(f'{json}\n')
+    file.close()
 
     print(f"Total {_file} doodles: " + str(len(overall_list)) + "\n")
 
@@ -63,5 +90,6 @@ for _file in file_list:
     print("Oceana/Australia total: " + str(len(OA_list)) + "\n")
 
     print("-"*20)
+
 
 print('done :)')
