@@ -1,5 +1,5 @@
 # Data Mining :)
-##To start
+## To start
 1. Download all the .npy and .ndjson files
     * car
     * shoe
