@@ -118,7 +118,8 @@ def convert_data(trainingdata_dir,
     writers.append(
         tf.python_io.TFRecordWriter("%s-%05i-of-%05i" % (output_file, i,
                                                          output_shards)))
-  reading_order = [i * observations_per_class for i in range(len(file_handles))]
+  reading_order = [i for i in range(len(file_handles)) for j in range(observations_per_class+1)]
+  print(reading_order)
   random.shuffle(reading_order)
 
   for c in reading_order:
