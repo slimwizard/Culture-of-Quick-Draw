@@ -1,2 +1,4 @@
 *.npy
 *.ndjson
+training.*
+eval.*
