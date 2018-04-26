@@ -42,7 +42,7 @@ import tensorflow as tf
 def parse_line(ndjson_line):
   """Parse an ndjson line and return ink (as np array) and classname."""
   sample = json.loads(ndjson_line)
-  class_name = sample["word"]
+  class_name = sample["countrycode"]
   if not class_name:
     print ("Empty classname")
     return None, None
@@ -101,7 +101,7 @@ def convert_data(trainingdata_dir,
   file_handles = []
   # Open all input files.
   for filename in sorted(tf.gfile.ListDirectory(trainingdata_dir)):
-    if not filename.endswith(".ndjson"):
+    if not filename.endswith(".jsonl"):
       print("Skipping", filename)
       continue
     file_handles.append(
@@ -118,8 +118,7 @@ def convert_data(trainingdata_dir,
     writers.append(
         tf.python_io.TFRecordWriter("%s-%05i-of-%05i" % (output_file, i,
                                                          output_shards)))
-
-  reading_order = range(len(file_handles)) * observations_per_class
+  reading_order = [i * observations_per_class for i in range(len(file_handles))]
   random.shuffle(reading_order)
 
   for c in reading_order:
@@ -188,17 +187,17 @@ if __name__ == "__main__":
   parser.add_argument(
       "--train_observations_per_class",
       type=int,
-      default=10000,
+      default=10,
       help="How many items per class to load for training.")
   parser.add_argument(
       "--eval_observations_per_class",
       type=int,
-      default=1000,
+      default=5,
       help="How many items per class to load for evaluation.")
   parser.add_argument(
       "--output_shards",
       type=int,
-      default=10,
+      default=1,
       help="Number of shards for the output.")
 
   FLAGS, unparsed = parser.parse_known_args()
