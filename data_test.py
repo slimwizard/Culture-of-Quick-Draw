@@ -3,11 +3,11 @@ import jsonlines as jl
 from pprint import pprint
 import itertools
 
-#file_LIST = ['car', 'shoe', 'backpack', 'sun', 'power_outlet']
-file_LIST = ["bird", "birthdaycake"]
+file_LIST = ['car', 'shoe', 'backpack', 'sun', 'power_outlet']
 
 
 for _file in file_LIST:
+    npy_data = np.load(f'./data/{_file}/{_file}.npy')
 
     NorthAmerica = ["AI", "AG", "AW", "BS", "BB", "BZ", "BM", "BQ", "VG", "CA", "KY", "CR", "CU", "CW", "DM", "DO", "SV", "GL", "GD", "GP", "GT", "HT", "HN", "JM", "MQ", "MX", "PM", "MS", "CW", "KN", "NI", "PA", "PR", "BQ", "SX", "LC", "PM", "VC", "TT", "TC", "US", "VI"]
     SouthAmerica = ["AR", "BO", "BR", "CL", "CO", "EC", "FK", "GF", "GY", "GY", "PY", "PE", "SR", "UY", "VE"]
@@ -18,93 +18,46 @@ for _file in file_LIST:
 
     OVERALL_LIST = []
     NA_LIST = []
-    SA_LIST = []
-    AF_LIST = []
-    EU_LIST = []
-    AS_LIST = []
-    OA_LIST = []
     NON_NA_LIST = []
 
-    with jl.open(f"./data/{_file}.ndjson") as reader:
+    with jl.open(f"./data/{_file}/{_file}.ndjson") as reader:
+        index = 0
         for obj in reader:
             d={}
-            d["continentcode"] = ""
-            d["drawing"] = obj["drawing"]
-            if obj["countrycode"] in NorthAmerica:
-                d["continentcode"] = "NA"
-                NA_LIST.append(d)
-            elif obj["countrycode"] in SouthAmerica:
-                d["continentcode"] = "SA"
-                SA_LIST.append(d)
-                d["continentcode"] = "NON_NA"
-                NON_NA_LIST.append(d)
-            elif obj["countrycode"] in Africa:
-                d["continentcode"] = "AF"
-                AF_LIST.append(d)
-                d["continentcode"] = "NON_NA"
-                NON_NA_LIST.append(d)
-            elif obj["countrycode"] in Europe:
-                d["continentcode"] = "EU"
-                EU_LIST.append(d)
-                d["continentcode"] = "NON_NA"
-                NON_NA_LIST.append(d)
-            elif obj["countrycode"] in Asia:
-                d["continentcode"] = "AS"
-                AS_LIST.append(d)
-                d["continentcode"] = "NON_NA"
-                NON_NA_LIST.append(d)
-            elif obj["countrycode"] in Oceana_Australia:
-                d["continentcode"] = "OA"
-                OA_LIST.append(d)
-                d["continentcode"] = "NON_NA"
-                NON_NA_LIST.append(d)
+            d['countrycode'] = obj['countrycode']
+            d['drawing'] = obj['drawing']
+            index += 1
+            OVERALL_LIST.append(d)
 
-    file = open(f'./data/{_file}/1/NA_{_file}.jsonl', 'w')
+
+    for i in OVERALL_LIST:
+        if i['countrycode'] in NorthAmerica:
+            NA_LIST.append(i)
+        elif i['countrycode'] in SouthAmerica:
+            NON_NA_LIST.append(i)
+        elif i['countrycode'] in Africa:
+            NON_NA_LIST.append(i)
+        elif i['countrycode'] in Europe:
+            NON_NA_LIST.append(i)
+        elif i['countrycode'] in Asia:
+            NON_NA_LIST.append(i)
+        elif i['countrycode'] in Oceana_Australia:
+            NON_NA_LIST.append(i)
+
+    file = open(f'./data/{_file}/NA_{_file}.jsonl', 'w')
     for json in NA_LIST:
+        json['countrycode'] = 'NA'
         file.write(f'{json}\n')
     file.close()
-    file = open(f'./data/{_file}/2/NA_{_file}.jsonl', 'w')
-    for json in NA_LIST:
-        file.write(f'{json}\n')
-    file.close()
-    file = open(f'./data/{_file}/1/SA_{_file}.jsonl', 'w')
-    for json in SA_LIST:
-        file.write(f'{json}\n')
-    file.close()
-    file = open(f'./data/{_file}/1/AF_{_file}.jsonl', 'w')
-    for json in AF_LIST:
-        file.write(f'{json}\n')
-    file.close()
-    file = open(f'./data/{_file}/1/EU_{_file}.jsonl', 'w')
-    for json in EU_LIST:
-        file.write(f'{json}\n')
-    file.close()
-    file = open(f'./data/{_file}/1/AS_{_file}.jsonl', 'w')
-    for json in AS_LIST:
-        file.write(f'{json}\n')
-    file.close()
-    file = open(f'./data/{_file}/1/OA_{_file}.jsonl', 'w')
-    for json in OA_LIST:
-        file.write(f'{json}\n')
-    file.close()
-    file = open(f'./data/{_file}/2/NON_NA_{_file}.jsonl', 'w')
+    f = open(f'./data/{_file}/NON_NA_{_file}.jsonl', 'w')
     for json in NON_NA_LIST:
-        file.write(f"{json}\n")
-    file.close()
+        json['countrycode'] = 'NON_NA'
+        f.write(f'{json}\n')
+    f.close()
 
     print(f"Total {_file} doodles: " + str(len(OVERALL_LIST)) + "\n")
 
     print("North America total: \n" + str(len(NA_LIST)) + "\n")
-
-    print("South American total: " + str(len(SA_LIST)) + "\n")
-
-    print("Africa total: " + str(len(AF_LIST)) + "\n")
-
-    print("Europe total: \n" + str(len(EU_LIST)) + "\n")
-
-    print("Asia total: " + str(len(AS_LIST)) + "\n")
-
-    print("Oceana/Australia total: " + str(len(OA_LIST)) + "\n")
 
     print("Non North America total: " + str(len(NON_NA_LIST)) + "\n")
 
