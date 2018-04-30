@@ -4,11 +4,11 @@ from pprint import pprint
 import itertools
 import matplotlib.pyplot as plt
 
-file_LIST = ['car', 'shoe', 'backpack', 'sun', 'power_outlet']
+file_LIST = ['car', 'shoe', 'backpack', 'sun', 'power_outlet', 'bird']
 
 
 for _file in file_LIST:
-    npy_data = np.load(f'./data/{_file}/{_file}.npy')
+    npy_data = np.load(f'./new_data/{_file}/{_file}.npy')
 
     NorthAmerica = ["AI", "AG", "AW", "BS", "BB", "BZ", "BM", "BQ", "VG", "CA", "KY", "CR", "CU", "CW", "DM", "DO", "SV", "GL", "GD", "GP", "GT", "HT", "HN", "JM", "MQ", "MX", "PM", "MS", "CW", "KN", "NI", "PA", "PR", "BQ", "SX", "LC", "PM", "VC", "TT", "TC", "US", "VI"]
     SouthAmerica = ["AR", "BO", "BR", "CL", "CO", "EC", "FK", "GF", "GY", "GY", "PY", "PE", "SR", "UY", "VE"]
@@ -26,7 +26,7 @@ for _file in file_LIST:
     OA_LIST = []
     NON_NA_LIST = []
 
-    with jl.open(f"./data/{_file}/{_file}.ndjson") as reader:
+    with jl.open(f"./new_data/{_file}/{_file}.ndjson") as reader:
         index = 0
         for obj in reader:
             d={}
@@ -35,65 +35,45 @@ for _file in file_LIST:
             index += 1
             OVERALL_LIST.append(d)
 
-
     for i in OVERALL_LIST:
         if i['countrycode'] in NorthAmerica:
-            NA_LIST.append(i)
+            NA_LIST.append(i['drawing'])
         elif i['countrycode'] in SouthAmerica:
-            SA_LIST.append(i)
-            NON_NA_LIST.append(i)
+            SA_LIST.append(i['drawing'])
+            NON_NA_LIST.append(i['drawing'])
         elif i['countrycode'] in Africa:
-            AF_LIST.append(i)
-            NON_NA_LIST.append(i)
+            AF_LIST.append(i['drawing'])
+            NON_NA_LIST.append(i['drawing'])
         elif i['countrycode'] in Europe:
-            EU_LIST.append(i)
-            NON_NA_LIST.append(i)
+            EU_LIST.append(i['drawing'])
+            NON_NA_LIST.append(i['drawing'])
         elif i['countrycode'] in Asia:
-            AS_LIST.append(i)
-            NON_NA_LIST.append(i)
+            AS_LIST.append(i['drawing'])
+            NON_NA_LIST.append(i['drawing'])
         elif i['countrycode'] in Oceana_Australia:
-            OA_LIST.append(i)
-            NON_NA_LIST.append(i)
-    file = open(f'./data/{_file}/NA_{_file}.jsonl', 'w')
-    for json in NA_LIST:
-        json['countrycode'] = 'NA'
-        file.write(f'{json}\n')
-    file.close()
-    file = open(f'./data/{_file}/SA_{_file}.jsonl', 'w')
-    for json in SA_LIST:
-        json['countrycode'] = 'SA'
-        file.write(f'{json}\n')
-    file.close()
-    file = open(f'./data/{_file}/AF_{_file}.jsonl', 'w')
-    for json in AF_LIST:
-        json['countrycode'] = 'AF'
-        file.write(f'{json}\n')
-    file.close()
-    file = open(f'./data/{_file}/EU_{_file}.jsonl', 'w')
-    for json in EU_LIST:
-        json['countrycode'] = 'EU'
-        file.write(f'{json}\n')
-    file.close()
-    file = open(f'./data/{_file}/AS_{_file}.jsonl', 'w')
-    for json in AS_LIST:
-        json['countrycode'] = 'AS'
-        file.write(f'{json}\n')
-    file.close()
-    file = open(f'./data/{_file}/OA_{_file}.jsonl', 'w')
-    for json in OA_LIST:
-        json['countrycode'] = 'OA'
-        file.write(f'{json}\n')
-    file.close()
-    f = open(f'./data/{_file}/NON_NA_{_file}.jsonl', 'w')
-    for json in NON_NA_LIST:
-        json['countrycode'] = 'NON_NA'
-        f.write(f'{json}\n')
-    f.close()
+            OA_LIST.append(i['drawing'])
+            NON_NA_LIST.append(i['drawing'])
 
-    plt.bar([len(i) for i in [NA_LIST, SA_LIST, AF_LIST, EU_LIST, AS_LIST, OA_LIST]])
-    plt.xticks(x, ('North America', 'South America', 'Africa', 'Europe', 'Asia', 'Oceania'))
+    np.save(f'./new_data/{_file}/NA_{_file}.npy', np.array(NA_LIST))
+    np.save(f'./new_data/{_file}/SA_{_file}.npy', np.array(SA_LIST))
+    np.save(f'./new_data/{_file}/AF_{_file}.npy', np.array(AF_LIST))
+    np.save(f'./new_data/{_file}/EU_{_file}.npy', np.array(EU_LIST))
+    np.save(f'./new_data/{_file}/AS_{_file}.npy', np.array(AS_LIST))
+    np.save(f'./new_data/{_file}/OA_{_file}.npy', np.array(OA_LIST))
+    np.save(f'./new_data/{_file}/NON_NA_{_file}.npy', np.array(NON_NA_LIST))
+
+    print(f'done with {_file}')
+    print(f'Total: { len(OVERALL_LIST) }')
+    print(f'NA Total: { len(NA_LIST) }')
+    print(f'Non_NA Total: { len(NON_NA_LIST) }')
+
+    plot_list = [len(NA_LIST), len(SA_LIST), len(AF_LIST), len(EU_LIST), len(AS_LIST), len(OA_LIST)]
+    plt.bar(np.arange(6), plot_list)
+    plt.xticks(np.arange(6), ('North America', 'South America', 'Africa', 'Europe', 'Asia', 'Oceania'))
+    plt.ylabel('Total Doodles')
     plt.title(f'{_file}')
     plt.show()
+
 
     # print(f"Total {_file} doodles: " + str(len(OVERALL_LIST)) + "\n")
     #
