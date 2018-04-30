@@ -2,6 +2,7 @@ import numpy as np
 import jsonlines as jl
 from pprint import pprint
 import itertools
+import matplotlib.pyplot as plt
 
 file_LIST = ['car', 'shoe', 'backpack', 'sun', 'power_outlet']
 
@@ -18,6 +19,11 @@ for _file in file_LIST:
 
     OVERALL_LIST = []
     NA_LIST = []
+    SA_LIST = []
+    AF_LIST = []
+    EU_LIST = []
+    AS_LIST = []
+    OA_LIST = []
     NON_NA_LIST = []
 
     with jl.open(f"./data/{_file}/{_file}.ndjson") as reader:
@@ -25,7 +31,7 @@ for _file in file_LIST:
         for obj in reader:
             d={}
             d['countrycode'] = obj['countrycode']
-            d['drawing'] = obj['drawing']
+            d['drawing'] = npy_data[index]
             index += 1
             OVERALL_LIST.append(d)
 
@@ -34,19 +40,48 @@ for _file in file_LIST:
         if i['countrycode'] in NorthAmerica:
             NA_LIST.append(i)
         elif i['countrycode'] in SouthAmerica:
+            SA_LIST.append(i)
             NON_NA_LIST.append(i)
         elif i['countrycode'] in Africa:
+            AF_LIST.append(i)
             NON_NA_LIST.append(i)
         elif i['countrycode'] in Europe:
+            EU_LIST.append(i)
             NON_NA_LIST.append(i)
         elif i['countrycode'] in Asia:
+            AS_LIST.append(i)
             NON_NA_LIST.append(i)
         elif i['countrycode'] in Oceana_Australia:
+            OA_LIST.append(i)
             NON_NA_LIST.append(i)
-
     file = open(f'./data/{_file}/NA_{_file}.jsonl', 'w')
     for json in NA_LIST:
         json['countrycode'] = 'NA'
+        file.write(f'{json}\n')
+    file.close()
+    file = open(f'./data/{_file}/SA_{_file}.jsonl', 'w')
+    for json in SA_LIST:
+        json['countrycode'] = 'SA'
+        file.write(f'{json}\n')
+    file.close()
+    file = open(f'./data/{_file}/AF_{_file}.jsonl', 'w')
+    for json in AF_LIST:
+        json['countrycode'] = 'AF'
+        file.write(f'{json}\n')
+    file.close()
+    file = open(f'./data/{_file}/EU_{_file}.jsonl', 'w')
+    for json in EU_LIST:
+        json['countrycode'] = 'EU'
+        file.write(f'{json}\n')
+    file.close()
+    file = open(f'./data/{_file}/AS_{_file}.jsonl', 'w')
+    for json in AS_LIST:
+        json['countrycode'] = 'AS'
+        file.write(f'{json}\n')
+    file.close()
+    file = open(f'./data/{_file}/OA_{_file}.jsonl', 'w')
+    for json in OA_LIST:
+        json['countrycode'] = 'OA'
         file.write(f'{json}\n')
     file.close()
     f = open(f'./data/{_file}/NON_NA_{_file}.jsonl', 'w')
@@ -55,13 +90,18 @@ for _file in file_LIST:
         f.write(f'{json}\n')
     f.close()
 
-    print(f"Total {_file} doodles: " + str(len(OVERALL_LIST)) + "\n")
+    plt.bar([len(i) for i in [NA_LIST, SA_LIST, AF_LIST, EU_LIST, AS_LIST, OA_LIST]])
+    plt.xticks(x, ('North America', 'South America', 'Africa', 'Europe', 'Asia', 'Oceania'))
+    plt.title(f'{_file}')
+    plt.show()
 
-    print("North America total: \n" + str(len(NA_LIST)) + "\n")
-
-    print("Non North America total: " + str(len(NON_NA_LIST)) + "\n")
-
-    print("-"*20)
+    # print(f"Total {_file} doodles: " + str(len(OVERALL_LIST)) + "\n")
+    #
+    # print("North America total: \n" + str(len(NA_LIST)) + "\n")
+    #
+    # print("Non North America total: " + str(len(NON_NA_LIST)) + "\n")
+    #
+    # print("-"*20)
 
 
 print('done :)')
