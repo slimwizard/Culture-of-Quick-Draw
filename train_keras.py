@@ -6,8 +6,9 @@ from sklearn.metrics import accuracy_score, confusion_matrix, roc_curve, roc_auc
 from sklearn.model_selection import train_test_split, GridSearchCV
 
 
+
 import keras
-from keras.models import Sequential
+from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers.convolutional import Conv2D, MaxPooling2D
 from keras.utils import np_utils
@@ -15,25 +16,20 @@ from keras import backend as K
 K.set_image_dim_ordering('th')
 
 
-EU_car = np.load('new_data/car/EU_car.npy')
-AS_car = np.load('new_data/car/AS_car.npy')
-AF_car = np.load('new_data/car/AF_car.npy')
-NA_car = np.load('new_data/car/NA_car.npy')
-OA_car = np.load('new_data/car/OA_car.npy')
-SA_car = np.load('new_data/car/SA_car.npy')
-Non_NA_car = np.load('new_data/car/NON_NA_car.npy')
+NA_backpack = np.load('new_data/backpack/NA_backpack.npy')
+Non_NA_backpack = np.load('new_data/backpack/NON_NA_backpack.npy')
 
-NA_car = np.c_[NA_car, np.zeros(len(NA_car))]
-Non_NA_car = np.c_[Non_NA_car, np.ones(len(Non_NA_car))]
+NA_backpack = np.c_[NA_backpack, np.zeros(len(NA_backpack))]
+Non_NA_backpack = np.c_[Non_NA_backpack, np.ones(len(Non_NA_backpack))]
 
 
 # merge the cat and sheep arrays, and split the features (X) and labels (y). Convert to float32 to save some memory.
-X = np.concatenate((NA_car[:20000,:-1], Non_NA_car[:20000,:-1]), axis=0).astype('float32') # all columns but the last
-y = np.concatenate((NA_car[:20000,-1], Non_NA_car[:20000,-1]), axis=0).astype('float32') # the last column
+X = np.concatenate((NA_backpack[:5000,:-1], Non_NA_backpack[:5000,:-1]), axis=0).astype('float32') # all columns but the last
+y = np.concatenate((NA_backpack[:5000,-1], Non_NA_backpack[:5000,-1]), axis=0).astype('float32') # the last column
 
 # train/test split (divide by 255 to obtain normalized values between 0 and 1)
 # I will use a 50:50 split, since I want to start by training the models on 5'000 samples and thus have plenty of samples to spare for testing.
-X_train, X_test, y_train, y_test = train_test_split(X/255.,y,test_size=0.5,random_state=0)
+X_train, X_test, y_train, y_test = train_test_split(X/255.,y,test_size=0.2,random_state=0)
 
 # one hot encode outputs
 y_train_cnn = np_utils.to_categorical(y_train)
@@ -67,10 +63,11 @@ def cnn_model():
 np.random.seed(0)
 # build the model
 model_cnn = cnn_model()
+# model_cnn = load_model('models/sun_model.h5')
 # Fit the model
 model_cnn.fit(X_train_cnn, y_train_cnn, validation_data=(X_test_cnn, y_test_cnn), epochs=10, batch_size=200)
 # Final evaluation of the model
-scores = model_cnn.evaluate(X_test_cnn, y_test_cnn, verbose=0)
+scores = model_cnn.evaluate(X_test_cnn, y_test_cnn, verbose=1)
 print('Final CNN accuracy: ', scores[1])
 
 # function to plot the 28x28 pixel images from numpy arrays
@@ -95,6 +92,6 @@ def plot_samples(input_array, rows=4, cols=5, title=''):
     plt.show()
 
 
-model_cnn.save('models/car_model.h5')
+model_cnn.save('models/backpack_model.h5')
 #plot_samples(NA_car)
 #plot_samples(Non_NA_car)
