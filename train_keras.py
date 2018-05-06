@@ -16,16 +16,16 @@ from keras import backend as K
 K.set_image_dim_ordering('th')
 
 
-NA_backpack = np.load('new_data/backpack/NA_backpack.npy')
-Non_NA_backpack = np.load('new_data/backpack/NON_NA_backpack.npy')
+NA_bird = np.load('new_data/bird/NA_bird.npy')
+Non_NA_bird = np.load('new_data/bird/NON_NA_bird.npy')
 
-NA_backpack = np.c_[NA_backpack, np.zeros(len(NA_backpack))]
-Non_NA_backpack = np.c_[Non_NA_backpack, np.ones(len(Non_NA_backpack))]
+NA_bird = np.c_[NA_bird, np.zeros(len(NA_bird))]
+Non_NA_bird = np.c_[Non_NA_bird, np.ones(len(Non_NA_bird))]
 
 
 # merge the cat and sheep arrays, and split the features (X) and labels (y). Convert to float32 to save some memory.
-X = np.concatenate((NA_backpack[:5000,:-1], Non_NA_backpack[:5000,:-1]), axis=0).astype('float32') # all columns but the last
-y = np.concatenate((NA_backpack[:5000,-1], Non_NA_backpack[:5000,-1]), axis=0).astype('float32') # the last column
+X = np.concatenate((NA_bird[:5000,:-1], Non_NA_bird[:5000,:-1]), axis=0).astype('float32') # all columns but the last
+y = np.concatenate((NA_bird[:5000,-1], Non_NA_bird[:5000,-1]), axis=0).astype('float32') # the last column
 
 # train/test split (divide by 255 to obtain normalized values between 0 and 1)
 # I will use a 50:50 split, since I want to start by training the models on 5'000 samples and thus have plenty of samples to spare for testing.
@@ -92,6 +92,6 @@ def plot_samples(input_array, rows=4, cols=5, title=''):
     plt.show()
 
 
-model_cnn.save('models/backpack_model.h5')
-#plot_samples(NA_car)
-#plot_samples(Non_NA_car)
+model_cnn.save('models/bird_model.h5')
+#plot_samples(NA_bird)
+#plot_samples(Non_NA_bird)
